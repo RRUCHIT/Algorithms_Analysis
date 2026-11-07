@@ -1,0 +1,442 @@
+%=======================================================================
+%  Algorithms: An Analytical Note
+%  Discrete Mathematics (MSc IT) -- Assignment
+%  Student : Solanki Ruchit M.   ID: 202612085
+%  Course  : MSc IT
+%  Instructor : Prof. Gopinath Panda
+%  Subject : Discrete Mathematics
+%  Reference : Kenneth H. Rosen, "Discrete Mathematics and Its
+%              Applications", 8th edition, Chapter 3 (Algorithms).
+%
+%  Compile with :  pdflatex  (or xelatex / lualatex)
+%=======================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,top=0.85in,bottom=0.85in,left=0.95in,right=0.95in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+
+%------------------------------------------------------------- styling
+\definecolor{navy}{HTML}{12355B}
+\definecolor{accent}{HTML}{1F6FEB}
+\definecolor{teal}{HTML}{0E9594}
+\definecolor{softgray}{HTML}{F4F6F9}
+
+\titleformat{\section}{\normalfont\large\bfseries\color{navy}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries\color{accent}}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{0.8em}{0.35em}
+\titlespacing*{\subsection}{0pt}{0.6em}{0.25em}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize Solanki Ruchit M. \textbar\ 202612085}
+\fancyhead[R]{\footnotesize Discrete Mathematics \textbar\ Algorithms}
+\fancyfoot[C]{\footnotesize\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\captionsetup{font=small,labelfont={bf,color=navy},skip=3pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+
+%------------------------------------------------------------- theorems
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand{\bigOmega}{\Omega}
+\newcommand{\bigTheta}{\Theta}
+
+\setlist[itemize]{leftmargin=1.3em,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=2pt,topsep=3pt}
+
+\begin{document}
+
+%------------------------------------------------------------- title
+\begin{center}
+{\LARGE\bfseries\color{navy} Algorithms: An Analytical Note}\\[6pt]
+{\large Discrete Mathematics --- Assignment}\\[10pt]
+{\small
+\begin{tabular}{@{}ll@{}}
+\textbf{Student:} & Solanki Ruchit M. \quad (ID: 202612085)\\
+\textbf{Course:} & MSc IT\\
+\textbf{Subject:} & Discrete Mathematics\\
+\textbf{Instructor:} & Prof. Gopinath Panda\\
+\textbf{Reference:} & K.~H. Rosen, \emph{Discrete Mathematics and Its}\\
+& \emph{Applications}, 8th ed., Chapter~3 (Algorithms)\\
+\end{tabular}}
+\end{center}
+\vspace{-4pt}
+\hrule
+\vspace{6pt}
+
+\begin{abstract}
+\noindent
+This note presents a complete, self--contained treatment of \emph{algorithms} as
+developed in Chapter~3 of Rosen's \emph{Discrete Mathematics and Its Applications}.
+It answers four questions in order: \textbf{(i)}~what exactly an algorithm is and
+which properties make a procedure an algorithm; \textbf{(ii)}~the principal
+\emph{types} of algorithms (searching, sorting, greedy and divide--and--conquer);
+\textbf{(iii)}~how the \emph{growth of functions} is measured formally with the
+$\bigO$, $\bigOmega$ and $\bigTheta$ notations; and \textbf{(iv)}~how
+\emph{complexity} is analysed in the worst, average and best cases, together with
+the notion of tractability. Every definition is stated formally and illustrated
+with a small diagram, and each claim about running time is justified
+analytically. The companion artefacts of this submission are the LaTeX
+pseudocode file, the executed Jupyter notebook and the interactive HTML
+dashboard.
+\end{abstract}
+
+%=======================================================================
+\section{Introduction: What is an Algorithm?}
+%=======================================================================
+
+The word \emph{algorithm} derives from the ninth--century Persian mathematician
+Muhammad ibn Musa \emph{al--Khwarizmi}; the Latinised form \emph{Algoritmi}
+became \emph{algorithm}. Intuitively an algorithm is a recipe, but discrete
+mathematics demands a precise definition.
+
+\begin{definition}[Algorithm, Rosen \S3.1]
+An \textbf{algorithm} is a finite sequence of precise instructions for performing
+a computation or for solving a problem.
+\end{definition}
+
+\begin{definition}[The seven properties]
+A procedure is an algorithm only if it satisfies all of the following:
+\begin{enumerate}[label=\textbf{(\arabic*)}]
+\item \textbf{Input} --- it receives a finite set of values from a specified set;
+\item \textbf{Output} --- it produces a solution from a specified set;
+\item \textbf{Definiteness} --- each step is precisely and unambiguously stated;
+\item \textbf{Correctness} --- it produces the correct output for every legal input;
+\item \textbf{Finiteness} --- it produces the output after a \emph{finite} number of steps;
+\item \textbf{Effectiveness} --- each step is basic enough to be carried out exactly;
+\item \textbf{Generality} --- it solves a whole \emph{class} of problems, not one instance.
+\end{enumerate}
+\end{definition}
+
+Figure~\ref{fig:box} summarises this view of an algorithm as a transducer of
+inputs into outputs.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig1_algorithm_box.pdf}
+\caption{An algorithm transforms an input instance into an output solution, and
+must satisfy the seven properties of Definition~1.2.}
+\label{fig:box}
+\end{figure}
+
+\subsection{Pseudocode conventions}
+Algorithms in Chapter~3 are written in \emph{pseudocode}, an informal but
+unambiguous mixture of English and programming syntax. Its conventions are:
+assignment \texttt{:=}; block structure by indentation; control flow with
+\texttt{if--then--else}, \texttt{while}, \texttt{for}; procedures returning a
+value via \texttt{return}; and \texttt{\{ \}} for a comment. Because pseudocode
+hides the machine, it exposes the \emph{logic} and therefore the \emph{cost} of a
+procedure --- the central concern of \S3 and \S4 below.
+
+\subsection{The limits of algorithms}
+Not every problem has an algorithmic solution. The \textbf{halting problem} asks
+for a procedure that decides, for an arbitrary program and input, whether the
+program terminates. Turing proved that \emph{no such algorithm exists}: the
+problem is \emph{undecidable}. This is the canonical reason the definition above
+insists on \emph{definiteness} and \emph{finiteness} --- an algorithm is not merely
+``a way of computing'', but a guaranteed termination with a specified answer.
+
+%=======================================================================
+\section{Types of Algorithms}
+%=======================================================================
+
+Chapter~3 presents several \emph{paradigms}. A paradigm is a strategy for
+designing an algorithm, and the paradigm usually determines the growth rate of
+the resulting procedure.
+
+\subsection{Searching algorithms}
+\textbf{Linear search} examines the list elements one after another until the
+target is found or the list is exhausted. \textbf{Binary search} works only on a
+list that is \emph{already sorted}: it compares the target with the middle
+element and discards half of the remaining list at every step. The two behave
+completely differently, as Figure~\ref{fig:search} shows.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig2_search_comparison.pdf}
+\caption{Searching for 61 in a sorted list of 12 elements. (a) Linear search
+performs 9 comparisons; (b) binary search performs only 3, because each step
+halves the interval.}
+\label{fig:search}
+\end{figure}
+
+\subsection{Sorting algorithms}
+Sorting rearranges a list into increasing order. Three elementary
+$\bigO(n^2)$ sorts are treated in Chapter~3:
+\begin{itemize}
+\item \textbf{Bubble sort} repeatedly compares adjacent pairs and swaps them when
+out of order; each pass moves the largest remaining value to the end
+(Figure~\ref{fig:bubble}).
+\item \textbf{Insertion sort} maintains a sorted prefix and inserts the next
+element into its correct place.
+\item \textbf{Selection sort} repeatedly selects the smallest remaining element
+and appends it to the sorted prefix.
+\end{itemize}
+A faster divide--and--conquer sort, \textbf{merge sort}, splits the list in half,
+sorts each half recursively and merges them in linear time, giving
+$\bigO(n\log n)$.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig3_bubble_sort.pdf}
+\caption{Bubble sort applied to $[29,10,14,37,13]$. Shaded cells are already in
+final position. The number of comparisons is exactly $n(n-1)/2$, hence
+$\bigO(n^2)$.}
+\label{fig:bubble}
+\end{figure}
+
+\subsection{Greedy algorithms}
+A \textbf{greedy algorithm} builds a solution one step at a time, always choosing
+the option that looks best \emph{right now}. The classical illustration is
+\emph{change--making}: to give change of $n$ cents using
+$25,10,5,1$--cent coins, repeatedly take the largest coin not exceeding the
+remaining amount. Greedy is fast (one pass over the denominations) but it is
+\emph{not always optimal} for arbitrary coin systems --- the U.S.\ system is one
+of the lucky ones.
+
+\subsection{Recursive and divide--and--conquer algorithms}
+A \textbf{recursive} algorithm calls itself on a smaller instance. When the
+recursion splits the input into independent parts, the paradigm is called
+\emph{divide--and--conquer}; its cost is described by a \emph{recurrence
+relation}. Merge sort satisfies $T(n)=2T(n/2)+n$, whose solution is
+$\bigTheta(n\log n)$.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Summary of the algorithm types discussed in Chapter~3.}
+\label{tab:types}
+\begin{tabular}{@{}p{3.4cm}p{4.4cm}p{4.2cm}c@{}}
+\toprule
+\textbf{Type} & \textbf{Idea} & \textbf{Typical example} & \textbf{Growth}\\
+\midrule
+Linear search & scan every element & find a key in an unsorted list & $\bigO(n)$\\
+Binary search & halve a sorted interval & find a key in a sorted list & $\bigO(\log n)$\\
+Bubble / insertion / selection sort & repeated swaps or insertions & sort a small list & $\bigO(n^2)$\\
+Merge sort & divide, conquer, merge & sort a large list & $\bigO(n\log n)$\\
+Greedy & make the locally best choice & coin change, scheduling & $\bigO(n)$--$\bigO(n\log n)$\\
+Recursive & reduce to a smaller instance & Towers of Hanoi, factorials & $2^n$, $n!$, \dots\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%=======================================================================
+\section{The Growth of Functions}
+%=======================================================================
+
+To compare algorithms we must compare the \emph{growth} of the functions that
+count their operations as the input size $n$ grows. Chapter~3 formalises this
+intuition with the ``big--$\bigO$'' family of notations.
+
+\begin{definition}[Big--$\bigO$]
+Let $f,g:\mathbb{Z}\to\mathbb{R}$. We say $f(x)$ is $\bigO(g(x))$ if there exist
+\emph{witnesses} $C>0$ and $k>0$ such that
+\[
+|f(x)|\le C\,|g(x)| \qquad \text{for all } x>k .
+\]
+\end{definition}
+
+\begin{definition}[Big--$\bigOmega$ and Big--$\bigTheta$]
+$f(x)$ is $\bigOmega(g(x))$ if $|f(x)|\ge C\,|g(x)|$ for all $x>k$ (a lower
+bound). We write $f(x)$ is $\bigTheta(g(x))$ if $f(x)$ is both
+$\bigO(g(x))$ and $\bigOmega(g(x))$, i.e.\ $f$ and $g$ grow at the same rate.
+\end{definition}
+
+The witnesses $C$ and $k$ are the whole content of the definition: $\bigO$ makes
+a claim about the \emph{tail} of the function, not about small values.
+
+\begin{theorem}[Sum and product rules]
+If $f_1=\bigO(g_1)$ and $f_2=\bigO(g_2)$, then
+\[
+(f_1+f_2)(x)=\bigO\!\big(\max(|g_1(x)|,|g_2(x)|)\big),
+\qquad
+(f_1f_2)(x)=\bigO\!\big(g_1(x)g_2(x)\big).
+\]
+\end{theorem}
+
+\begin{theorem}[Polynomials]
+If $a_0,a_1,\dots,a_k$ are real with $a_k\neq0$, then
+\[
+a_k n^k+a_{k-1}n^{k-1}+\dots+a_0 \;=\; \bigO(n^k),
+\]
+so the leading term alone determines the growth of a polynomial.
+\end{theorem}
+
+Figure~\ref{fig:growth} plots the standard functions. On a linear scale the
+exponential $2^n$ destroys every polynomial; on a logarithmic scale the powers
+$n$, $n^2$, $n^3$ become straight lines, which is exactly why logarithmic plots
+are used to compare growth rates.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig4_growth.pdf}
+\caption{Growth of the standard complexity functions on a linear axis (left) and
+a logarithmic axis (right).}
+\label{fig:growth}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig5_bigo_hierarchy.pdf}
+\caption{Inclusion hierarchy of the common complexity classes. Each class
+contains all the classes drawn inside it.}
+\label{fig:hierarchy}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Numerical values of the standard growth functions.}
+\label{tab:values}
+\begin{tabular}{@{}rrrrrr@{}}
+\toprule
+$n$ & $\log_2 n$ & $n$ & $n\log_2 n$ & $n^2$ & $2^n$\\
+\midrule
+$10$      & $3.3$  & $10$    & $33$      & $10^{2}$ & $1.02\times10^{3}$\\
+$10^{2}$  & $6.6$  & $10^{2}$& $6.6\times10^{2}$ & $10^{4}$ & $1.27\times10^{30}$\\
+$10^{3}$  & $10$   & $10^{3}$& $10^{4}$  & $10^{6}$ & $1.07\times10^{301}$\\
+$10^{4}$  & $13.3$ & $10^{4}$& $1.3\times10^{5}$ & $10^{8}$ & astronomically large\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%=======================================================================
+\section{Complexity of Algorithms}
+%=======================================================================
+
+\subsection{Time complexity}
+The \textbf{time complexity} of an algorithm is the number of basic operations it
+performs, expressed as a function of the input size $n$ using the notation of
+\S3. Three cases are distinguished:
+\begin{itemize}
+\item \textbf{Worst--case} complexity $W(n)$ --- the maximum over all inputs of
+size $n$; the most useful guarantee.
+\item \textbf{Average--case} complexity $A(n)$ --- the expected cost assuming a
+probability distribution on inputs.
+\item \textbf{Best--case} complexity $B(n)$ --- the minimum; usually of little
+practical value.
+\end{itemize}
+
+\subsection{Worked complexity analysis}
+\noindent\textbf{Linear search.} In the worst case the target is absent and every
+element is tested; the cost is $\bigTheta(n)$.\\
+\textbf{Binary search.} After $i$ steps the interval has size $n/2^{\,i-1}$; it
+becomes empty when $n/2^{\,i-1}<1$, i.e.\ $i>\log_2 n+1$. Hence
+$W(n)=\bigTheta(\log n)$ --- the enormous saving visible in Figure~\ref{fig:search}.\\
+\textbf{Bubble sort.} The inner loop performs comparisons
+\[
+\sum_{i=1}^{n-1}(n-i)=\frac{n(n-1)}{2}=\bigTheta(n^2),
+\]
+so bubble sort is quadratic in every case.
+
+\subsection{Space complexity and tractability}
+\textbf{Space complexity} counts memory cells rather than operations. A problem is
+called \emph{tractable} if it can be solved by an algorithm with polynomial
+worst--case time complexity; problems requiring exponential time are deemed
+\emph{intractable}, because for even modest $n$ the count explodes
+(Figure~\ref{fig:bars} and Table~\ref{tab:values}). The question of whether every
+problem whose solution can be \emph{checked} quickly can also be \emph{solved}
+quickly is the famous $\mathrm{P}$ versus $\mathrm{NP}$ problem.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig6_complexity_bars.pdf}
+\caption{Basic--operation counts at growing input sizes. The polynomial methods
+stay feasible while the number of operations for exponential methods becomes
+astronomical.}
+\label{fig:bars}
+\end{figure}
+
+%=======================================================================
+\section{Worked Analytical Examples}
+%=======================================================================
+
+\begin{example}[Finding the witnesses]
+Show that $f(n)=3n^2+2n+5$ is $\bigO(n^2)$.
+\end{example}
+\begin{proof}
+For every $n\ge1$ we have $2n\le 2n^2$ and $5\le 5n^2$. Therefore
+\[
+f(n)=3n^2+2n+5 \le 3n^2+2n^2+5n^2 = 10n^2 .
+\]
+Taking $C=10$ and $k=1$ gives $f(n)\le 10n^2$ for all $n>1$, so
+$f(n)=\bigO(n^2)$. Moreover $f(n)\ge 3n^2$ for $n\ge1$, so
+$f(n)=\bigOmega(n^2)$; combining the two bounds, $f(n)=\bigTheta(n^2)$.
+\end{proof}
+
+\begin{example}[Separating two growth rates]
+Show that $n^2$ is \emph{not} $\bigO(n\log n)$.
+\end{example}
+\begin{proof}
+Suppose, for contradiction, that $n^2\le C\,n\log_2 n$ for all $n>k$. Dividing by
+$n\log_2 n$ gives
+\[
+\frac{n}{\log_2 n}\le C \qquad\text{for all } n>k .
+\]
+But $n/\log_2 n\to\infty$ as $n\to\infty$; choosing $n>2^{\,C+1}$ makes the
+quotient exceed $C$, a contradiction. Hence $n^2\neq\bigO(n\log n)$, which is
+precisely why merge sort beats bubble sort on large inputs. \qedhere
+\end{proof}
+
+\begin{example}[Binary search recurrence]
+Let $W(n)$ be the worst--case number of comparisons of binary search. Then
+\[
+W(n)=W(\lfloor n/2\rfloor)+1,\qquad W(1)=1 .
+\]
+Unrolling the recurrence, $W(n)=1+\lfloor\log_2 n\rfloor$, i.e.\ $W(n)=\bigTheta(\log n)$.
+\end{example}
+
+%=======================================================================
+\section{Conclusion}
+%=======================================================================
+
+An algorithm is a finite, definite, effective and general procedure whose
+correctness is guaranteed for every legal input. Its power is measured not by
+how clever it looks but by how its operation count \emph{grows}: the
+$\bigO$--$\bigOmega$--$\bigTheta$ calculus of \S3 turns ``this algorithm feels
+faster'' into a theorem, and the worst--case analysis of \S4 decides whether a
+problem is tractable. The four paradigms of \S2 illustrate the whole range: a
+single change of strategy --- scanning versus halving, or quadratic versus
+divide--and--conquer --- moves a procedure from $\bigO(n^2)$ to
+$\bigO(n\log n)$ or from $\bigO(n)$ to $\bigO(\log n)$, which for large inputs is
+the difference between feasible and impossible.
+
+%=======================================================================
+\section*{References}
+\addcontentsline{toc}{section}{References}
+%=======================================================================
+\begin{enumerate}[label={[\arabic*]},leftmargin=2.2em]
+\item K.~H. Rosen, \emph{Discrete Mathematics and Its Applications},
+      8th ed., McGraw--Hill, 2019. \textbf{Chapter~3: Algorithms} (pp.~191--242).
+\item T.~H. Cormen, C.~E. Leiserson, R.~L. Rivest and C.~Stein,
+      \emph{Introduction to Algorithms}, 3rd ed., MIT Press, 2009.
+\item D.~E. Knuth, \emph{The Art of Computer Programming, Vol.~1:
+      Fundamental Algorithms}, 3rd ed., Addison--Wesley, 1997.
+\item R.~Sedgewick and K.~Wayne, \emph{Algorithms}, 4th ed., Addison--Wesley, 2011.
+\item J.~Kleinberg and E.~Tardos, \emph{Algorithm Design},
+      Pearson/Addison--Wesley, 2006.
+\item A.~M. Turing, ``On computable numbers, with an application to the
+      Entscheidungsproblem'', \emph{Proc.\ London Math.\ Soc.}, ser.~2,
+      vol.~42, pp.~230--265, 1936.
+\end{enumerate}
+
+\end{document}

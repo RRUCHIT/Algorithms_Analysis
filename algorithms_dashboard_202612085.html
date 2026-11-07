@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorithms Dashboard — Solanki Ruchit M. (202612085)</title>
+<style>
+  :root{
+    --bg:#080e1a; --bg2:#0d1627; --panel:#101c33; --panel-hi:#152340;
+    --line:#1e2f4f; --line-soft:#182642;
+    --ink:#e9f0ff; --muted:#8ea3c7; --muted2:#6b7fa3;
+    --blue:#3b82f6; --teal:#14b8a6; --amber:#f59e0b;
+    --red:#ef4444; --violet:#a855f7; --green:#22c55e;
+    --shadow:0 10px 34px rgba(0,0,0,.45);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 12% -10%, #12233f 0%, transparent 55%),
+      radial-gradient(1000px 500px at 100% 0%, #14284a 0%, transparent 50%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+    min-height:100vh;
+  }
+  .wrap{max-width:1420px;margin:0 auto;padding:24px 20px 40px}
+
+  /* ---------------- header ---------------- */
+  header.top{
+    background:linear-gradient(135deg,#0f1c33 0%, #12294b 100%);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:22px 26px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::after{
+    content:"";position:absolute;right:-60px;top:-80px;width:280px;height:280px;
+    background:radial-gradient(circle,rgba(59,130,246,.35),transparent 65%);
+    pointer-events:none;
+  }
+  .title-row{display:flex;flex-wrap:wrap;align-items:center;gap:18px;justify-content:space-between}
+  .brand h1{margin:0;font-size:26px;letter-spacing:.3px}
+  .brand h1 span{color:var(--blue)}
+  .brand p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+  .badge{
+    font-size:12px;color:#cfe0ff;border:1px solid #2b4a7c;background:rgba(59,130,246,.13);
+    padding:6px 12px;border-radius:999px;white-space:nowrap
+  }
+  .idgrid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:10px;margin-top:18px;
+  }
+  .idcard{
+    background:rgba(255,255,255,.03);border:1px solid var(--line-soft);
+    border-radius:12px;padding:10px 13px;
+  }
+  .idcard .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted2)}
+  .idcard .v{font-size:14px;font-weight:600;color:#eaf1ff;margin-top:2px}
+
+  /* ---------------- kpi strip ---------------- */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:18px 0}
+  .kpi{
+    background:linear-gradient(180deg,var(--panel) 0%,var(--bg2) 100%);
+    border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)
+  }
+  .kpi .label{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.9px}
+  .kpi .value{font-size:22px;font-weight:700;margin-top:3px}
+  .kpi .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .kpi.b .value{color:#7fb2ff}.kpi.t .value{color:#2dd4bf}
+  .kpi.a .value{color:#fbbf24}.kpi.r .value{color:#f87171}
+
+  /* ---------------- panels ---------------- */
+  .panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  @media (max-width:1120px){.panels{grid-template-columns:1fr}}
+  .panel{
+    background:linear-gradient(180deg,var(--panel) 0%,#0c1526 100%);
+    border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;
+  }
+  .panel > .ph{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:14px 16px;border-bottom:1px solid var(--line-soft);
+    background:rgba(255,255,255,.02)
+  }
+  .ph h2{margin:0;font-size:14.5px;letter-spacing:.2px}
+  .ph .tag{font-size:11px;color:#bcd2f7;background:rgba(59,130,246,.14);
+    border:1px solid #2b4a7c;border-radius:999px;padding:3px 10px;white-space:nowrap}
+  .pb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px;flex:1}
+
+  /* controls */
+  .ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .ctl label{font-size:11.5px;color:var(--muted)}
+  button{
+    font:inherit;font-size:12.5px;cursor:pointer;color:#eaf1ff;
+    background:linear-gradient(180deg,#1c2f52,#16253f);
+    border:1px solid #29456f;border-radius:9px;padding:7px 12px;
+    transition:.15s transform,.15s background,.15s border-color;
+  }
+  button:hover{background:#22385f;border-color:#3a5f95}
+  button:active{transform:translateY(1px)}
+  button.primary{background:linear-gradient(180deg,#2563eb,#1d4ed8);border-color:#3b82f6}
+  button.primary:hover{background:linear-gradient(180deg,#3273f0,#2058e6)}
+  button.teal{background:linear-gradient(180deg,#0f9d8f,#0b7f74);border-color:#14b8a6}
+  button.teal:hover{background:linear-gradient(180deg,#13b3a3,#0d8c80)}
+  button.ghost{background:transparent;border-color:#2b3f60;color:#b9caea}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  input[type=number]{
+    width:74px;background:#0a1322;border:1px solid #24405f;color:var(--ink);
+    border-radius:8px;padding:6px 8px;font:inherit;font-size:12.5px
+  }
+  select{
+    background:#0a1322;border:1px solid #24405f;color:var(--ink);border-radius:8px;
+    padding:6px 8px;font:inherit;font-size:12.5px
+  }
+  input[type=range]{accent-color:var(--blue);width:100%}
+
+  /* stat chips */
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    font-size:11.5px;color:#cddcf6;background:rgba(255,255,255,.04);
+    border:1px solid var(--line-soft);border-radius:8px;padding:5px 9px
+  }
+  .chip b{color:#fff}
+  .chip.ok{border-color:#1c6b3f;background:rgba(34,197,94,.12);color:#8ef0b4}
+  .chip.no{border-color:#7a2b2b;background:rgba(239,68,68,.12);color:#fca5a5}
+
+  /* ------- searching visualiser ------- */
+  .arrbox{
+    background:#0a1322;border:1px solid var(--line-soft);border-radius:12px;
+    padding:12px;min-height:118px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start
+  }
+  .cell{
+    flex:1 1 34px;min-width:30px;max-width:58px;height:44px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;color:#dbe6fb;
+    background:linear-gradient(180deg,#1b2b47,#152238);border:1px solid #2a4166;
+    transition:.18s all;position:relative
+  }
+  .cell.scanned{background:#3a2c14;border-color:#7a5b1c;color:#f0cf94;opacity:.85}
+  .cell.active{background:linear-gradient(180deg,#2563eb,#1e4fd0);border-color:#7fb2ff;
+    transform:translateY(-6px) scale(1.06);box-shadow:0 8px 18px rgba(59,130,246,.45)}
+  .cell.discard{opacity:.22;filter:grayscale(.6)}
+  .cell.found{background:linear-gradient(180deg,#16a34a,#0f8a3d);border-color:#7ef0a8;
+    transform:translateY(-6px) scale(1.08);box-shadow:0 8px 20px rgba(34,197,94,.5)}
+
+  /* ------- sorting visualiser ------- */
+  .barsbox{
+    background:#0a1322;border:1px solid var(--line-soft);border-radius:12px;
+    padding:12px;height:190px;display:flex;align-items:flex-end;gap:2px
+  }
+  .bar{
+    flex:1 1 0;min-width:2px;border-radius:4px 4px 2px 2px;
+    background:linear-gradient(180deg,#3b82f6,#1d4ed8);
+    transition:height .08s linear,background .12s;position:relative;
+    display:flex;justify-content:center
+  }
+  .bar span{position:absolute;top:-15px;font-size:9px;color:#a9c2e8;display:none}
+  .barsbox.wide span{display:block}
+  .bar.cmp{background:linear-gradient(180deg,#fbbf24,#d97706)}
+  .bar.swap{background:linear-gradient(180deg,#f87171,#dc2626)}
+  .bar.set{background:linear-gradient(180deg,#a855f7,#7e22ce)}
+  .bar.done{background:linear-gradient(180deg,#22c55e,#15803d)}
+
+  /* ------- growth panel ------- */
+  canvas{width:100%;display:block;border-radius:10px;background:#0a1322;border:1px solid var(--line-soft)}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--muted)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+  .tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+  .tbl th,.tbl td{padding:6px 8px;border-bottom:1px solid var(--line-soft);text-align:left}
+  .tbl th{color:#b8cbee;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+  .tbl td.mono{font-family:"Cascadia Code",Consolas,monospace;color:#cfdcf5}
+  .tbl tr:hover td{background:rgba(59,130,246,.06)}
+
+  /* ------- reference section ------- */
+  .refgrid{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-top:16px}
+  @media (max-width:1120px){.refgrid{grid-template-columns:1fr}}
+  .ladder{display:flex;flex-direction:column;gap:7px}
+  .rung{display:flex;align-items:center;gap:10px;font-size:12px}
+  .rung .name{width:56px;font-weight:700;font-family:Consolas,monospace}
+  .rung .track{flex:1;background:#0a1322;border:1px solid var(--line-soft);border-radius:7px;height:22px;overflow:hidden}
+  .rung .fill{height:100%;border-radius:6px}
+  .rung .note{width:132px;color:var(--muted);font-size:11px;text-align:right}
+
+  footer{margin-top:20px;color:var(--muted2);font-size:12px;text-align:center;line-height:1.7}
+  footer b{color:#b9caea}
+  .hint{font-size:11.5px;color:var(--muted2);font-style:italic}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ======================= HEADER ======================= -->
+  <header class="top">
+    <div class="title-row">
+      <div class="brand">
+        <h1>Algorithms <span>&mdash; Interactive Dashboard</span></h1>
+        <p>Discrete Mathematics &middot; MSc IT &middot; based on K.&nbsp;H. Rosen, <i>Discrete Mathematics and Its Applications</i>, 8th ed., Chapter&nbsp;3</p>
+      </div>
+      <div class="badge">Live visualisation &middot; single self-contained HTML file</div>
+    </div>
+
+    <div class="idgrid">
+      <div class="idcard"><div class="k">Student</div><div class="v">Solanki Ruchit M.</div></div>
+      <div class="idcard"><div class="k">Student ID</div><div class="v">202612085</div></div>
+      <div class="idcard"><div class="k">Course</div><div class="v">MSc IT</div></div>
+      <div class="idcard"><div class="k">Subject</div><div class="v">Discrete Mathematics</div></div>
+      <div class="idcard"><div class="k">Instructor</div><div class="v">Prof. Gopinath Panda</div></div>
+      <div class="idcard"><div class="k">Reference</div><div class="v">Rosen &mdash; Chapter 3</div></div>
+    </div>
+  </header>
+
+  <!-- ======================= KPI STRIP ======================= -->
+  <section class="kpis">
+    <div class="kpi b"><div class="label">Searching</div><div class="value">O(n) vs O(log n)</div><div class="sub">linear &amp; binary search, live</div></div>
+    <div class="kpi t"><div class="label">Sorting</div><div class="value">O(n&sup2;) &rarr; O(n log n)</div><div class="sub">4 algorithms animated</div></div>
+    <div class="kpi a"><div class="label">Growth of functions</div><div class="value">6 classes</div><div class="sub">interactive curve explorer</div></div>
+    <div class="kpi r"><div class="label">Complexity</div><div class="value">tractable vs intractable</div><div class="sub">polynomial vs exponential</div></div>
+  </section>
+
+  <!-- ======================= THREE PANELS ======================= -->
+  <section class="panels">
+
+    <!-- ---------- PANEL 1 : SEARCHING ---------- -->
+    <article class="panel">
+      <div class="ph"><h2>1 &middot; Searching Visualiser</h2><span class="tag">Rosen &sect;3.1</span></div>
+      <div class="pb">
+        <div class="ctl">
+          <label>Target&nbsp;</label>
+          <input type="number" id="targetInput" value="61" min="0" max="99">
+          <button class="primary" id="btnLinear">Linear search</button>
+          <button class="teal" id="btnBinary">Binary search</button>
+          <button class="ghost" id="btnNewArr">New array</button>
+        </div>
+        <div class="ctl">
+          <label>Speed</label>
+          <input type="range" id="searchSpeed" min="30" max="600" value="220" step="10">
+        </div>
+        <div class="arrbox" id="searchArray"></div>
+        <div class="chips">
+          <span class="chip">Comparisons: <b id="sComps">0</b></span>
+          <span class="chip" id="sResult">Result: &mdash;</span>
+          <span class="chip">Complexity: <b id="sComplexity">&mdash;</b></span>
+        </div>
+        <p class="hint">The array is kept sorted so that <i>both</i> algorithms can run on it. Binary search visibly discards half of the remaining interval at every step.</p>
+      </div>
+    </article>
+
+    <!-- ---------- PANEL 2 : SORTING ---------- -->
+    <article class="panel">
+      <div class="ph"><h2>2 &middot; Sorting Visualiser</h2><span class="tag">Rosen &sect;3.1</span></div>
+      <div class="pb">
+        <div class="ctl">
+          <select id="sortAlgo">
+            <option value="bubble">Bubble sort &mdash; O(n&sup2;)</option>
+            <option value="insertion">Insertion sort &mdash; O(n&sup2;)</option>
+            <option value="selection">Selection sort &mdash; O(n&sup2;)</option>
+            <option value="merge">Merge sort &mdash; O(n log n)</option>
+          </select>
+          <button class="primary" id="btnSort">Start</button>
+          <button class="ghost" id="btnNewBars">New data</button>
+        </div>
+        <div class="ctl">
+          <label>Size <b id="sizeLabel">24</b></label>
+          <input type="range" id="sizeRange" min="8" max="60" value="24">
+        </div>
+        <div class="ctl">
+          <label>Speed</label>
+          <input type="range" id="sortSpeed" min="1" max="120" value="35">
+        </div>
+        <div class="barsbox" id="bars"></div>
+        <div class="chips">
+          <span class="chip">Comparisons: <b id="kComps">0</b></span>
+          <span class="chip">Writes/Swaps: <b id="kSwaps">0</b></span>
+          <span class="chip">Steps: <b id="kSteps">0</b></span>
+        </div>
+        <p class="hint">Amber = the pair being compared, red = a swap, violet = a value being written, green = final position.</p>
+      </div>
+    </article>
+
+    <!-- ---------- PANEL 3 : GROWTH ---------- -->
+    <article class="panel">
+      <div class="ph"><h2>3 &middot; Growth of Functions</h2><span class="tag">Rosen &sect;3.2</span></div>
+      <div class="pb">
+        <div class="ctl">
+          <button class="primary" id="scaleLinear">Linear scale</button>
+          <button class="ghost" id="scaleLog">Log scale</button>
+        </div>
+        <div class="ctl">
+          <label>Max n = <b id="nMaxLabel">40</b></label>
+          <input type="range" id="nRange" min="10" max="60" value="40">
+        </div>
+        <canvas id="growth" height="230"></canvas>
+        <div class="legend">
+          <span><i style="background:#6b7280"></i>1</span>
+          <span><i style="background:#14b8a6"></i>log&#8322;n</span>
+          <span><i style="background:#3b82f6"></i>n</span>
+          <span><i style="background:#f59e0b"></i>n&nbsp;log&#8322;n</span>
+          <span><i style="background:#ef4444"></i>n&sup2;</span>
+          <span><i style="background:#a855f7"></i>2&#8319;</span>
+        </div>
+        <table class="tbl" id="growthTable"></table>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ======================= REFERENCE ======================= -->
+  <section class="refgrid">
+    <article class="panel">
+      <div class="ph"><h2>Complexity Reference &mdash; Rosen Chapter 3</h2><span class="tag">summary</span></div>
+      <div class="pb">
+        <table class="tbl">
+          <thead><tr><th>Algorithm</th><th>Paradigm</th><th>Best</th><th>Worst</th><th>Space</th></tr></thead>
+          <tbody>
+            <tr><td>Linear search</td><td>sequential scan</td><td class="mono">O(1)</td><td class="mono">O(n)</td><td class="mono">O(1)</td></tr>
+            <tr><td>Binary search</td><td>halve interval</td><td class="mono">O(1)</td><td class="mono">O(log n)</td><td class="mono">O(1)</td></tr>
+            <tr><td>Bubble sort</td><td>exchange</td><td class="mono">O(n)</td><td class="mono">O(n&sup2;)</td><td class="mono">O(1)</td></tr>
+            <tr><td>Insertion sort</td><td>incremental</td><td class="mono">O(n)</td><td class="mono">O(n&sup2;)</td><td class="mono">O(1)</td></tr>
+            <tr><td>Selection sort</td><td>incremental</td><td class="mono">O(n&sup2;)</td><td class="mono">O(n&sup2;)</td><td class="mono">O(1)</td></tr>
+            <tr><td>Merge sort</td><td>divide &amp; conquer</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(n)</td></tr>
+            <tr><td>Greedy change</td><td>greedy</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(1)</td></tr>
+            <tr><td>Towers of Hanoi</td><td>recursion</td><td class="mono">O(2&#8319;)</td><td class="mono">O(2&#8319;)</td><td class="mono">O(n)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel">
+      <div class="ph"><h2>Growth Ladder &mdash; inclusion hierarchy</h2><span class="tag">Rosen &sect;3.2</span></div>
+      <div class="pb">
+        <div class="ladder">
+          <div class="rung"><span class="name">O(1)</span><span class="track"><span class="fill" style="width:8%;background:linear-gradient(90deg,#22c55e,#16a34a)"></span></span><span class="note">constant</span></div>
+          <div class="rung"><span class="name">O(log n)</span><span class="track"><span class="fill" style="width:18%;background:linear-gradient(90deg,#14b8a6,#0d9488)"></span></span><span class="note">logarithmic</span></div>
+          <div class="rung"><span class="name">O(n)</span><span class="track"><span class="fill" style="width:33%;background:linear-gradient(90deg,#3b82f6,#1d4ed8)"></span></span><span class="note">linear</span></div>
+          <div class="rung"><span class="name">O(n log n)</span><span class="track"><span class="fill" style="width:50%;background:linear-gradient(90deg,#f59e0b,#d97706)"></span></span><span class="note">linearithmic</span></div>
+          <div class="rung"><span class="name">O(n&sup2;)</span><span class="track"><span class="fill" style="width:72%;background:linear-gradient(90deg,#ef4444,#b91c1c)"></span></span><span class="note">quadratic</span></div>
+          <div class="rung"><span class="name">O(2&#8319;)</span><span class="track"><span class="fill" style="width:100%;background:linear-gradient(90deg,#a855f7,#6b21a8)"></span></span><span class="note">exponential &mdash; intractable</span></div>
+        </div>
+        <p class="hint">Each class contains all the classes above it: O(1) &sub; O(log n) &sub; O(n) &sub; O(n log n) &sub; O(n&sup2;) &sub; O(2&#8319;). A problem is <b>tractable</b> if it admits a polynomial-time algorithm.</p>
+        <div class="chips">
+          <span class="chip">Big-O: upper bound</span>
+          <span class="chip">Big-&Omega;: lower bound</span>
+          <span class="chip">Big-&Theta;: exact rate</span>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <footer>
+    <b>Solanki Ruchit M.</b> &middot; ID 202612085 &middot; MSc IT &middot; Discrete Mathematics &middot; Prof. Gopinath Panda<br>
+    Reference: K. H. Rosen, <i>Discrete Mathematics </i>, 8th ed., Chapter 3 (Algorithms), pp. 191&ndash;242.<br>
+    This dashboard is a single self-contained HTML file &mdash;
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   Utilities
+   ============================================================ */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const $ = id => document.getElementById(id);
+
+/* ============================================================
+   PANEL 1 - SEARCHING
+   ============================================================ */
+const S = { arr: [], target: 61, running: false, comps: 0 };
+
+function buildSearchArray() {
+  const n = 18, vals = [];
+  while (vals.length < n) {
+    const v = 5 + Math.floor(Math.random() * 91);
+    if (!vals.includes(v)) vals.push(v);
+  }
+  vals.sort((a, b) => a - b);
+  S.arr = vals;
+  S.target = Math.random() < 0.6 ? vals[Math.floor(Math.random() * n)]
+                                 : 2 + Math.floor(Math.random() * 97);
+  $('targetInput').value = S.target;
+  renderSearchArray();
+  S.comps = 0; $('sComps').textContent = '0';
+  $('sResult').textContent = 'Result: \u2014';
+  $('sResult').className = 'chip';
+  $('sComplexity').textContent = '\u2014';
+}
+
+function renderSearchArray() {
+  const box = $('searchArray');
+  box.innerHTML = S.arr.map((v, i) =>
+    `<div class="cell" data-i="${i}">${v}</div>`).join('');
+  const t = $('targetInput').value;
+  $('targetInput').title = 'target = ' + t;
+}
+
+function sClearMarks() {
+  document.querySelectorAll('#searchArray .cell').forEach(c => {
+    c.classList.remove('active', 'scanned', 'discard', 'found');
+  });
+}
+
+async function runLinear() {
+  if (S.running) return;
+  S.running = true; sClearMarks();
+  S.comps = 0; $('sComps').textContent = '0';
+  $('sComplexity').textContent = 'O(n)';
+  $('sResult').textContent = 'Result: searching\u2026'; $('sResult').className = 'chip';
+  const x = parseInt($('targetInput').value, 10);
+  const speed = +$('searchSpeed').value;
+  const cells = document.querySelectorAll('#searchArray .cell');
+  $('btnLinear').disabled = $('btnBinary').disabled = true;
+  for (let i = 0; i < S.arr.length; i++) {
+    if (!S.running) { $('btnLinear').disabled = $('btnBinary').disabled = false; return; }
+    S.comps++; $('sComps').textContent = S.comps;
+    cells[i].classList.add('active');
+    await sleep(speed);
+    if (S.arr[i] === x) {
+      cells[i].classList.remove('active');
+      cells[i].classList.add('found');
+      $('sResult').textContent = `Result: found ${x} at index ${i}`;
+      $('sResult').className = 'chip ok';
+      S.running = false;
+      $('btnLinear').disabled = $('btnBinary').disabled = false;
+      return;
+    }
+    cells[i].classList.remove('active');
+    cells[i].classList.add('scanned');
+  }
+  $('sResult').textContent = `Result: ${x} not found`;
+  $('sResult').className = 'chip no';
+  S.running = false;
+  $('btnLinear').disabled = $('btnBinary').disabled = false;
+}
+
+async function runBinary() {
+  if (S.running) return;
+  S.running = true; sClearMarks();
+  S.comps = 0; $('sComps').textContent = '0';
+  $('sComplexity').textContent = 'O(log n)';
+  $('sResult').textContent = 'Result: searching\u2026'; $('sResult').className = 'chip';
+  const x = parseInt($('targetInput').value, 10);
+  const speed = +$('searchSpeed').value;
+  const cells = document.querySelectorAll('#searchArray .cell');
+  $('btnLinear').disabled = $('btnBinary').disabled = true;
+  let lo = 0, hi = S.arr.length - 1;
+  while (lo <= hi) {
+    if (!S.running) { $('btnLinear').disabled = $('btnBinary').disabled = false; return; }
+    const mid = (lo + hi) >> 1;
+    S.comps++; $('sComps').textContent = S.comps;
+    cells.forEach((c, k) => {
+      if (k < lo || k > hi) c.classList.add('discard');
+      else c.classList.remove('discard');
+    });
+    cells[mid].classList.add('active');
+    await sleep(speed);
+    if (S.arr[mid] === x) {
+      cells[mid].classList.remove('active');
+      cells[mid].classList.add('found');
+      $('sResult').textContent = `Result: found ${x} at index ${mid}`;
+      $('sResult').className = 'chip ok';
+      S.running = false;
+      $('btnLinear').disabled = $('btnBinary').disabled = false;
+      return;
+    }
+    cells[mid].classList.remove('active');
+    cells[mid].classList.add('scanned');
+    if (S.arr[mid] < x) lo = mid + 1; else hi = mid - 1;
+  }
+  $('sResult').textContent = `Result: ${x} not found`;
+  $('sResult').className = 'chip no';
+  S.running = false;
+  $('btnLinear').disabled = $('btnBinary').disabled = false;
+}
+
+$('btnLinear').onclick = runLinear;
+$('btnBinary').onclick = runBinary;
+$('btnNewArr').onclick = () => { S.running = false; buildSearchArray(); };
+$('targetInput').onchange = renderSearchArray;
+
+/* ============================================================
+   PANEL 2 - SORTING
+   ============================================================ */
+const K = { orig: [], cur: [], frames: [], idx: 0, timer: null, playing: false,
+            comps: 0, swaps: 0, sorted: new Set(), speed: 35 };
+
+function newBars() {
+  const n = +$('sizeRange').value;
+  K.orig = Array.from({ length: n }, () => 5 + Math.floor(Math.random() * 96));
+  K.cur = K.orig.slice();
+  K.sorted = new Set();
+  stopSort();
+  K.comps = 0; K.swaps = 0; K.idx = 0; K.frames = [];
+  $('kComps').textContent = '0'; $('kSwaps').textContent = '0'; $('kSteps').textContent = '0';
+  $('bars').classList.toggle('wide', n <= 26);
+  renderBars(null);
+}
+
+function renderBars(h) {
+  const wrap = $('bars');
+  const max = Math.max(...K.cur, 1);
+  let html = '';
+  for (let i = 0; i < K.cur.length; i++) {
+    const pct = Math.max((K.cur[i] / max) * 100, 3);
+    let cls = 'bar';
+    if (K.sorted.has(i)) cls += ' done';
+    if (h) {
+      if (h.t === 'cmp' && (h.i === i || h.j === i)) cls += ' cmp';
+      if (h.t === 'swap' && (h.i === i || h.j === i)) cls += ' swap';
+      if (h.t === 'set' && h.i === i) cls += ' set';
+    }
+    html += `<div class="${cls}" style="height:${pct}%"><span>${K.cur[i]}</span></div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+/* ---- frame recorders (pure, operate on a copy) ---- */
+function framesBubble(a) {
+  const f = [], n = a.length;
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = 0; j < n - 1 - i; j++) {
+      f.push({ t: 'cmp', i: j, j: j + 1 });
+      if (a[j] > a[j + 1]) { [a[j], a[j + 1]] = [a[j + 1], a[j]]; f.push({ t: 'swap', i: j, j: j + 1 }); }
+    }
+    f.push({ t: 'mark', i: n - 1 - i });
+  }
+  f.push({ t: 'mark', i: 0 });
+  return f;
+}
+function framesInsertion(a) {
+  const f = [], n = a.length;
+  for (let i = 1; i < n; i++) {
+    const key = a[i]; let j = i - 1;
+    while (j >= 0) {
+      f.push({ t: 'cmp', i: j, j: j + 1 });
+      if (a[j] > key) { a[j + 1] = a[j]; f.push({ t: 'set', i: j + 1, v: a[j] }); j--; }
+      else break;
+    }
+    a[j + 1] = key; f.push({ t: 'set', i: j + 1, v: key });
+  }
+  return f;
+}
+function framesSelection(a) {
+  const f = [], n = a.length;
+  for (let i = 0; i < n - 1; i++) {
+    let m = i;
+    for (let j = i + 1; j < n; j++) {
+      f.push({ t: 'cmp', i: m, j: j });
+      if (a[j] < a[m]) m = j;
+    }
+    if (m !== i) { [a[i], a[m]] = [a[m], a[i]]; f.push({ t: 'swap', i: i, j: m }); }
+    f.push({ t: 'mark', i: i });
+  }
+  f.push({ t: 'mark', i: n - 1 });
+  return f;
+}
+function framesMerge(a) {
+  const f = [], aux = a.slice();
+  (function ms(lo, hi) {
+    if (hi - lo < 2) return;
+    const mid = (lo + hi) >> 1;
+    ms(lo, mid); ms(mid, hi);
+    let i = lo, j = mid, k = lo;
+    while (i < mid && j < hi) {
+      f.push({ t: 'cmp', i: i, j: j });
+      if (aux[i] <= aux[j]) { a[k] = aux[i]; f.push({ t: 'set', i: k, v: aux[i] }); i++; }
+      else { a[k] = aux[j]; f.push({ t: 'set', i: k, v: aux[j] }); j++; }
+      k++;
+    }
+    while (i < mid) { a[k] = aux[i]; f.push({ t: 'set', i: k, v: aux[i] }); i++; k++; }
+    while (j < hi) { a[k] = aux[j]; f.push({ t: 'set', i: k, v: aux[j] }); j++; k++; }
+    for (let t = lo; t < hi; t++) aux[t] = a[t];
+  })(0, a.length);
+  return f;
+}
+
+function startSort() {
+  stopSort();
+  const alg = $('sortAlgo').value;
+  K.cur = K.orig.slice();
+  K.sorted = new Set(); K.comps = 0; K.swaps = 0; K.idx = 0;
+  const copy = K.orig.slice();
+  K.frames = alg === 'bubble' ? framesBubble(copy)
+           : alg === 'insertion' ? framesInsertion(copy)
+           : alg === 'selection' ? framesSelection(copy)
+           : framesMerge(copy);
+  $('kComps').textContent = '0'; $('kSwaps').textContent = '0'; $('kSteps').textContent = '0';
+  K.playing = true;
+  $('btnSort').textContent = 'Restart';
+  tick();
+}
+
+function tick() {
+  if (!K.playing) return;
+  if (K.idx >= K.frames.length) { K.playing = false; renderBars(null); return; }
+  const f = K.frames[K.idx++];
+  if (f.t === 'cmp') K.comps++;
+  if (f.t === 'swap') { [K.cur[f.i], K.cur[f.j]] = [K.cur[f.j], K.cur[f.i]]; K.swaps++; }
+  if (f.t === 'set') { K.cur[f.i] = f.v; K.swaps++; }
+  if (f.t === 'mark') K.sorted.add(f.i);
+  $('kComps').textContent = K.comps;
+  $('kSwaps').textContent = K.swaps;
+  $('kSteps').textContent = K.idx;
+  renderBars(f.t === 'mark' ? null : f);
+  K.timer = setTimeout(tick, +$('sortSpeed').value);
+}
+
+function stopSort() {
+  K.playing = false;
+  if (K.timer) { clearTimeout(K.timer); K.timer = null; }
+  $('btnSort').textContent = 'Start';
+}
+
+$('btnSort').onclick = startSort;
+$('btnNewBars').onclick = newBars;
+$('sizeRange').oninput = () => { $('sizeLabel').textContent = $('sizeRange').value; newBars(); };
+$('sortAlgo').onchange = () => { stopSort(); K.cur = K.orig.slice(); K.sorted = new Set(); renderBars(null);
+                                 $('kComps').textContent = '0'; $('kSwaps').textContent = '0'; $('kSteps').textContent = '0'; };
+
+/* ============================================================
+   PANEL 3 - GROWTH OF FUNCTIONS  (canvas chart)
+   ============================================================ */
+const G = { log: false, nMax: 40 };
+const CURVES = [
+  { name: '1',        f: n => 1,               color: '#6b7280' },
+  { name: 'log2 n',   f: n => Math.log2(Math.max(n, 2)), color: '#14b8a6' },
+  { name: 'n',        f: n => n,               color: '#3b82f6' },
+  { name: 'n log2 n', f: n => n * Math.log2(Math.max(n, 2)), color: '#f59e0b' },
+  { name: 'n^2',      f: n => n * n,           color: '#ef4444' },
+  { name: '2^n',      f: n => Math.pow(2, n),  color: '#a855f7' },
+];
+
+function drawGrowth() {
+  const cv = $('growth');
+  const dpr = window.devicePixelRatio || 1;
+  const W = cv.clientWidth, H = 230;
+  cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  const L = 46, R = 12, T = 12, B = 26;
+  const pw = W - L - R, ph = H - T - B;
+
+  // value ranges
+  let yMin = 0, yMax;
+  if (G.log) { yMax = Math.log10(Math.pow(2, G.nMax)) + 0.4; }
+  else {
+    yMax = 0;
+    for (let n = 1; n <= G.nMax; n++) yMax = Math.max(yMax, Math.min(n * n, 420));
+    yMax = Math.max(yMax * 1.08, 10);
+  }
+  const xMin = 1;
+  const X = n => L + (n - xMin) / (G.nMax - xMin) * pw;
+  const Y = v => {
+    if (G.log) {
+      const val = v <= 0 ? 0 : Math.log10(v);
+      return T + ph - (val - yMin) / (yMax - yMin) * ph;
+    }
+    return T + ph - Math.min(v, yMax) / yMax * ph;
+  };
+
+  // grid + axes
+  ctx.strokeStyle = 'rgba(120,150,200,.16)'; ctx.lineWidth = 1;
+  ctx.fillStyle = '#7d92b5'; ctx.font = '10px Consolas, monospace';
+  const yTicks = 5;
+  for (let k = 0; k <= yTicks; k++) {
+    const yy = T + ph - k / yTicks * ph;
+    ctx.beginPath(); ctx.moveTo(L, yy); ctx.lineTo(L + pw, yy); ctx.stroke();
+    let lab;
+    if (G.log) lab = '10^' + (yMin + k / yTicks * (yMax - yMin)).toFixed(0);
+    else lab = Math.round(k / yTicks * yMax);
+    ctx.fillText(lab, 6, yy + 3);
+  }
+  ctx.strokeStyle = 'rgba(160,190,230,.45)';
+  ctx.beginPath(); ctx.moveTo(L, T); ctx.lineTo(L, T + ph); ctx.lineTo(L + pw, T + ph); ctx.stroke();
+  for (let n = 1; n <= G.nMax; n += Math.max(1, Math.round(G.nMax / 8))) {
+    ctx.fillStyle = '#7d92b5';
+    ctx.fillText(n, X(n) - 5, H - 8);
+  }
+  ctx.fillStyle = '#9fb4d6'; ctx.fillText('n', L + pw - 6, H - 8);
+
+  // curves
+  CURVES.forEach(c => {
+    ctx.strokeStyle = c.color; ctx.lineWidth = 2; ctx.beginPath();
+    let started = false;
+    for (let n = 1; n <= G.nMax; n += 0.25) {
+      let v = c.f(n);
+      if (!G.log && v > yMax * 1.02) { started = false; continue; }
+      const px = X(n), py = Y(v);
+      if (!started) { ctx.moveTo(px, py); started = true; }
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  });
+
+  // table
+  const rows = [2, 5, 10, 20, G.nMax].filter((v, i, s) => s.indexOf(v) === i && v <= G.nMax);
+  let html = '<thead><tr><th>n</th><th>log&#8322;n</th><th>n</th><th>n log&#8322;n</th><th>n&sup2;</th><th>2&#8319;</th></tr></thead><tbody>';
+  rows.forEach(n => {
+    const pow = Math.pow(2, n);
+    html += `<tr><td class="mono">${n}</td><td class="mono">${Math.log2(Math.max(n, 2)).toFixed(2)}</td>` +
+            `<td class="mono">${n}</td><td class="mono">${(n * Math.log2(Math.max(n, 2))).toFixed(1)}</td>` +
+            `<td class="mono">${n * n}</td><td class="mono">${pow < 1e15 ? pow.toLocaleString() : pow.toExponential(2)}</td></tr>`;
+  });
+  html += '</tbody>';
+  $('growthTable').innerHTML = html;
+}
+
+$('scaleLinear').onclick = () => { G.log = false; $('scaleLinear').className = 'primary'; $('scaleLog').className = 'ghost'; drawGrowth(); };
+$('scaleLog').onclick = () => { G.log = true; $('scaleLog').className = 'primary'; $('scaleLinear').className = 'ghost'; drawGrowth(); };
+$('nRange').oninput = () => { G.nMax = +$('nRange').value; $('nMaxLabel').textContent = G.nMax; drawGrowth(); };
+window.addEventListener('resize', drawGrowth);
+
+/* ============================================================
+   Init
+   ============================================================ */
+buildSearchArray();
+newBars();
+drawGrowth();
+</script>
+</body>
+</html>
