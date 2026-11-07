@@ -4,14 +4,7 @@ An assignment submission for **Discrete Mathematics (MSc IT)** covering **Chapte
 
 The project analyses classical algorithms both **analytically** (formal proofs, complexity analysis) and **empirically** (a Python implementation with an interactive dashboard).
 
-| | |
-|---|---|
-| **Student** | Solanki Ruchit M. |
-| **ID** | 202612085 |
-| **Course** | MSc IT |
-| **Subject** | Discrete Mathematics |
-| **Instructor** | Prof. Gopinath Panda |
-| **Reference** | K. H. Rosen, *Discrete Mathematics and Its Applications*, 8th ed., Ch. 3 |
+
 
 ## Contents
 
